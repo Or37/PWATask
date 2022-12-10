@@ -1,0 +1,56 @@
+﻿window.addEventListener("DOMContentLoaded", function () {
+  
+  let linktoshare = "";
+  const loadStatus = document.getElementById('status');
+  const mapLink = document.getElementById('map-link');
+  const iframe = document.getElementById('iframe');
+
+  document.getElementById('find-me').addEventListener('click', geoFindMe);
+  document.getElementById('shareBtn').addEventListener('click', share);
+
+    function geoFindMe() {
+      mapLink.href = '';
+      mapLink.textContent = '';
+      iframe.src = '';
+      iframe.classList.add("d-none");
+  
+      if (navigator.geolocation) {
+        loadStatus.textContent = 'מאתר מיקום';
+        navigator.geolocation.getCurrentPosition(success, error);
+      } else {
+        loadStatus.textContent = 'לא ניתמך בדפדפן';
+      }
+    }
+  
+   function share(){
+        if(navigator.canShare){
+          navigator.share({
+            title: 'שיתוף המיקום שלי',
+            text: linktoshare,
+            url: linktoshare,
+        })
+        }else{ document.getElementById("status").textContent = "לא ניתן לשתף נתונים"}
+    }
+
+
+    function success(position) {
+      const latitude = position.coords.latitude;
+      const longitude = position.coords.longitude;
+
+      loadStatus.textContent = '';
+  
+      const linktoembed = `https://maps.google.com/?output=embed&q=${latitude},${longitude}`;
+      linktoshare = `https://maps.google.com/?q=${latitude},${longitude}`;
+      iframe.src = linktoembed;
+      iframe.classList.remove("d-none");
+      mapLink.textContent = `Latitude: ${latitude} °, Longitude: ${longitude} °`;
+      mapLink.href = linktoshare;
+    }
+  
+    function error() {
+      loadStatus.textContent = 'לא ניתן למצוא את המיקום';
+    }
+    
+  })
+  
+
